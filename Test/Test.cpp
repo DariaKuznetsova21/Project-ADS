@@ -3,12 +3,16 @@
 #include <cstdio>
 #include <string>
 #include <ctime>
+#include <random> 
 using namespace std;
 
 
 bool createFileWithRandomNumbers(const string& fileName, const int numbersCount, const int maxNumberValue)
 {
-	srand(time(NULL));
+	mt19937 gen(time(0));
+	uniform_int_distribution <int> uid(0, maxNumberValue);
+	int rand_num;
+
 	fstream File("D:\\test\\" + fileName + ".txt", ios::out);
 
 	if (!File.is_open()) 
@@ -18,7 +22,8 @@ bool createFileWithRandomNumbers(const string& fileName, const int numbersCount,
 	}
 
 	for (int i = 0; i < numbersCount; i++) {
-		File << rand() % (maxNumberValue + 1) << " ";
+		rand_num = uid(gen);
+		File << rand_num << " ";
 	}
 
 	File.close();
@@ -32,7 +37,7 @@ bool createFileWithRandomNumbers(const string& fileName, const int numbersCount,
 	}
 
 
-	if (sizeof File == 0) 
+	if ( File.peek() == EOF) 
 	{
 		cout << "File is an empty" << endl;
 		return false;
