@@ -13,11 +13,10 @@ bool createFileWithRandomNumbers(const string& fileName, const int numbersCount,
 	uniform_int_distribution <int> uid(0, maxNumberValue);
 	int rand_num;
 
-	fstream File("D:\\test\\" + fileName + ".txt", ios::out);
+	fstream File(fileName + ".txt", ios::out);
 
 	if (!File.is_open()) 
 	{
-		cout << "Can't create 'test.txt'!" << endl;
 		return false;
 	}
 
@@ -28,23 +27,20 @@ bool createFileWithRandomNumbers(const string& fileName, const int numbersCount,
 
 	File.close();
 
-	File.open("D:\\test\\" + fileName + ".txt");
+	File.open(fileName + ".txt");
 
 	if (!File.is_open()) 
 	{
-		cout << "Can't open 'test.txt'!" << endl;
 		return false;
 	}
 
 
 	if ( File.peek() == EOF) 
 	{
-		cout << "File is an empty" << endl;
 		return false;
 	}
 	else 
 	{
-		cout << " File was created" << endl;
 		return true;
 	}
 }
@@ -52,10 +48,9 @@ bool createFileWithRandomNumbers(const string& fileName, const int numbersCount,
 bool isFileContainsSortedArray(const string& fileName) 
 {
 
-	fstream File("D:\\test\\" + fileName + ".txt");
+	fstream File(fileName + ".txt");
 	if (!File.is_open()) 
 	{
-		cout << "Can't create 'test.txt'!" << endl;
 		return false;
 	}
 
@@ -84,34 +79,39 @@ bool isFileContainsSortedArray(const string& fileName)
 
 bool sort(const string& fileName)
 {
-	fstream file1("D:\\test\\" + fileName + "1.txt", ios::out);
+	fstream file1(fileName + "1.txt", ios::out);
 	if (!file1.is_open()) {
-		cout << "Can't create 'test1.txt'!" << endl;
+		cerr << "Can't create 'test1.txt'!" << endl;
+		return false;
 	}
 
-	fstream file2("D:\\test\\" + fileName + "2.txt", ios::out);
+	fstream file2(fileName + "2.txt", ios::out);
 	if (!file2.is_open()) {
-		cout << "Can't create 'test2.txt'!" << endl;
+		cerr << "Can't create 'test2.txt'!" << endl;
+		return false;
 	}
 
-	fstream file3("D:\\test\\" + fileName + "3.txt", ios::out);
+	fstream file3(fileName + "3.txt", ios::out);
 	if (!file3.is_open()) {
-		cout << "Can't create 'test3.txt'!" << endl;
+		cerr << "Can't create 'test3.txt'!" << endl;
+		return false;
 	}
 
-	fstream file4("D:\\test\\" + fileName + "4.txt", ios::out);
+	fstream file4(fileName + "4.txt", ios::out);
 	if (!file4.is_open()) {
-		cout << "Can't create 'test4.txt'!" << endl;
+		cerr << "Can't create 'test4.txt'!" << endl;
+		return false;
 	}
 
-	fstream file = fstream("D:\\test\\" + fileName + ".txt");
+	fstream file = fstream(fileName + ".txt");
 	if (!file.is_open()) {
-		cout << "Can't open 'test.txt'!" << endl;
+		cerr << "Can't open 'test.txt'!" << endl;
+		return false;
 	}
 
 	fstream Fold[2];
 	for (int i = 0; i < 2; i++) {
-		Fold[i] = fstream("D:\\test\\" + fileName + to_string(i + 1) + ".txt");
+		Fold[i] = fstream(fileName + to_string(i + 1) + ".txt", ios:: in);
 	}
 
 	int x[2];
@@ -142,13 +142,13 @@ bool sort(const string& fileName)
 	{
 
 		for (int i = 0; i < 2; i++) {
-			Fold[i] = fstream("D:\\test\\" + fileName + to_string(i + 1) + ".txt");
+			Fold[i] = fstream(fileName + to_string(i + 1) + ".txt", ios::in);
 		}
 
 
 		if (Fold[1].peek() == EOF) // Проверили на отсортированность 
 		{
-			file = fstream("D:\\test\\" + fileName + ".txt", ios::out);
+			file = fstream(fileName + ".txt", ios::out);
 			Fold[0] >> x1;
 
 			while (!Fold[0].eof()) 
@@ -167,11 +167,11 @@ bool sort(const string& fileName)
 
 		fstream Take[2];
 		for (int i = 0; i < 2; i++) {
-			Take[i] = fstream("D:\\test\\" + fileName + to_string(i + 1) + ".txt");
+			Take[i] = fstream(fileName + to_string(i + 1) + ".txt", ios::in);
 		}
 
 		for (int i = 0; i < 2; i++) {
-			Fold[i] = fstream("D:\\test\\" + fileName + to_string(i + 3) + ".txt", ios::out);
+			Fold[i] = fstream(fileName + to_string(i + 3) + ".txt", ios::out);
 		}
 
 		Take[0] >> x[0];
@@ -244,13 +244,13 @@ bool sort(const string& fileName)
 
 
 		for (int i = 0; i < 2; i++) {
-			Fold[i] = fstream("D:\\test\\" + fileName + to_string(i + 3) + ".txt");
+			Fold[i] = fstream(fileName + to_string(i + 3) + ".txt", ios::in);
 		}
 
 
 		if (Fold[1].peek() == EOF) 
 		{ 
-			file = fstream("D:\\test\\" + fileName + ".txt", ios::out);
+			file = fstream(fileName + ".txt", ios::out);
 			Fold[0] >> x1;
 
 			while (!Fold[0].eof()) 
@@ -266,11 +266,11 @@ bool sort(const string& fileName)
 
 
 		for (int i = 0; i < 2; i++) {
-			Take[i] = fstream("D:\\test\\" + fileName + to_string(i + 3) + ".txt");
+			Take[i] = fstream(fileName + to_string(i + 3) + ".txt", ios::in);
 		}
 
 		for (int i = 0; i < 2; i++) {
-			Fold[i] = fstream("D:\\test\\" + fileName + to_string(i + 1) + ".txt", ios::out);
+			Fold[i] = fstream(fileName + to_string(i + 1) + ".txt", ios::out);
 		}
 
 
@@ -342,23 +342,22 @@ bool sort(const string& fileName)
 		Fold[1].close();
 	}
 
+	
+
 }
 int createAndSortFile(const string& fileName, const int numbersCount, const int maxNumberValue)
 {
 	if (!createFileWithRandomNumbers(fileName, numbersCount, maxNumberValue)) {
-		cout << " File wasn't created" << endl;
 		return -1;
 	}
 
 	sort(fileName);
 
 	if (!isFileContainsSortedArray(fileName)) {
-		cout << " File wasn't sorted correctly" << endl;
 		return -2;
 	}
 
 
-	cout << " File was sorted correctly" << endl;
 	return 1;
 }
 
