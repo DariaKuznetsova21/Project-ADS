@@ -133,11 +133,16 @@ bool BinaryTree::addNode(Node* subTreeRoot, const int key) //Добавлени�
 
 void BinaryTree::copy (const Node* subTreeRoot, Node* copyRoot)// Копирование
 {
-	if (subTreeRoot == nullptr || copyRoot == nullptr)
+	if (subTreeRoot == nullptr)
 	{
 		return;
 	}
-	else {
+	if (subTreeRoot == copyRoot) 
+	{
+		return;
+	}
+	if(copyRoot) { 
+		clear(copyRoot);
 		copyRoot = new Node;
 		copyRoot->key = subTreeRoot->key;
 		copyRoot->leftChild = nullptr;
@@ -306,7 +311,7 @@ int BinaryTree::heightNode(Node* root) const //ф-ция вычисления в
 
 
 
-int main()// Здесь проходили некоторые проверки и т.д
+int main()
 {
 	int* a = new int[10];
 	for (int i = 0; i < 10; i++) {
@@ -316,7 +321,16 @@ int main()// Здесь проходили некоторые проверки �
 	BinaryTree t1(a, 10);
 	t1.print();
 
-	BinaryTree t2=t1;
+	int* a1 = new int[10];
+	for (int i = 0; i < 10; i++) {
+		a1[i] = i + 2;
+	}
+
+	BinaryTree t2(a1, 10);
+	t2.print();
+
+	t2 = t1;
+
 	t2.print();
 
 	return 0;
