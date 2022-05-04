@@ -71,8 +71,8 @@ public:
 	int deleteNode(const int key);
 	void printLevel(const int level);
 	void printLevel(Node* subTreeRoot, const int level, const int currentLevel = 0);
-	std::vector <int> MassiveOfNodes();
-	std::vector <int> MassiveOfNodes(Node* root);
+	std::vector <int> MassiveOfNodes(std::vector<int> keys);
+	std::vector <int> MassiveOfNodes(Node* root, std:: vector<int> keys);
 	int GetMinKey()const;
 	int GetMinKey(Node* subTreeRoot)const;
 	int GetMaxKey()const;
@@ -300,24 +300,39 @@ int BinaryTree::NumberOfNodes(Node* subTreeRoot) const
 
 }
 
-std::vector <int> BinaryTree::MassiveOfNodes() 
+std::vector <int> BinaryTree::MassiveOfNodes(std::vector<int> keys)
 {
-	return this->MassiveOfNodes(m_root);
+	return MassiveOfNodes(m_root, keys);
 }
 
-std:: vector <int> BinaryTree::MassiveOfNodes(Node* root) 
+std::vector <int> BinaryTree::MassiveOfNodes(Node* subTreeRoot, std::vector<int> keys) 
 {
+	int c = NumberOfNodes(subTreeRoot);
 	int left, right;
-	std:: vector <int> count = {};
-	if (root == nullptr) {
-		return count;
-	}
-	if (root->leftChild == nullptr && root->rightChild == nullptr) {
-		count.push_back(root->key);
-		return count;
-	}
-	if (root->leftChild != nullptr) {};
 	
+	if (subTreeRoot == nullptr) {
+		return keys;
+	}
+	
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr) {
+		//std::cout<< subTreeRoot->key << "e " ;
+
+		//keys.push_back(subTreeRoot->key);
+		return keys;
+	}
+
+	if (subTreeRoot->leftChild != nullptr) {
+		std::cout << subTreeRoot->leftChild->key << "l ";
+		keys.push_back(subTreeRoot->leftChild->key);
+		keys = MassiveOfNodes(subTreeRoot->leftChild, keys);
+	}
+
+	if (subTreeRoot->rightChild != nullptr) {
+		std::cout << subTreeRoot->rightChild->key << "r ";
+		keys.push_back(subTreeRoot->rightChild->key);
+		keys = MassiveOfNodes(subTreeRoot->rightChild, keys);
+	}
+	return keys;
 
 }
 
@@ -420,11 +435,26 @@ int main()
 	for (int i = 0; i < 10; i++) {
 		a[i] = i+1;
 	}
+	
 
 	BinaryTree t1(a, 10);
-	t1.print();
+	/*t1.printLevel(0);
+	std::cout << std::endl;
+	t1.printLevel(1);
+	std::cout << std::endl;
+	t1.printLevel(2);
+	std::cout << std::endl;
+	t1.printLevel(3);
+	std::cout << std::endl;
+	t1.printLevel(4);*/
 
-	int k = t1.GetMinKey();
-	std::cout << k << std::endl;
+	
+	std::vector <int> keys = {};
+	keys = t1.MassiveOfNodes(keys);
+	/*for (int i=0; i < keys.size(); i++) {
+		std::cout << keys[i];
+	}*/
+	//int k = t1.GetMinKey();
+	//std::cout << k << std::endl;
 	return 0;
 }
