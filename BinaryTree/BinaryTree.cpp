@@ -1,4 +1,4 @@
-﻿#include <random>
+#include <random>
 #include <iostream>
 
 #pragma once
@@ -301,6 +301,7 @@ int BinaryTree::NumberOfNodes(Node* subTreeRoot) const
 }
 
 std::vector <int> BinaryTree::MassiveOfNodes(std::vector<int> keys)
+
 {
 	return MassiveOfNodes(m_root, keys);
 }
@@ -317,21 +318,13 @@ std::vector <int> BinaryTree::MassiveOfNodes(Node* subTreeRoot, std::vector<int>
 	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr) {
 		//std::cout<< subTreeRoot->key << "e " ;
 
-		//keys.push_back(subTreeRoot->key);
+		keys.push_back(subTreeRoot->key);
 		return keys;
 	}
+	keys = MassiveOfNodes(subTreeRoot->leftChild, keys);
+	keys.push_back(subTreeRoot->key);
+	keys = MassiveOfNodes(subTreeRoot->rightChild, keys);
 
-	if (subTreeRoot->leftChild != nullptr) {
-		std::cout << subTreeRoot->leftChild->key << "l ";
-		keys.push_back(subTreeRoot->leftChild->key);
-		keys = MassiveOfNodes(subTreeRoot->leftChild, keys);
-	}
-
-	if (subTreeRoot->rightChild != nullptr) {
-		std::cout << subTreeRoot->rightChild->key << "r ";
-		keys.push_back(subTreeRoot->rightChild->key);
-		keys = MassiveOfNodes(subTreeRoot->rightChild, keys);
-	}
 	return keys;
 
 }
@@ -448,12 +441,12 @@ int main()
 	std::cout << std::endl;
 	t1.printLevel(4);*/
 
-	
+	// 
 	std::vector <int> keys = {};
 	keys = t1.MassiveOfNodes(keys);
-	/*for (int i=0; i < keys.size(); i++) {
-		std::cout << keys[i];
-	}*/
+	for (int i=0; i < keys.size(); i++) {
+		std::cout << keys[i]<< " ";
+	}
 	//int k = t1.GetMinKey();
 	//std::cout << k << std::endl;
 	return 0;
