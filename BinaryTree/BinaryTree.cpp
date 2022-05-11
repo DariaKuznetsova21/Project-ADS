@@ -73,6 +73,7 @@ public:
 	void printLevel(Node* subTreeRoot, const int level, const int currentLevel = 0);
 	std::vector <int> MassiveOfNodes(std::vector<int> keys);
 	std::vector <int> MassiveOfNodes(Node* root, std:: vector<int> keys);
+	int GetSumOfKeys();
 	int GetMinKey()const;
 	int GetMinKey(Node* subTreeRoot)const;
 	int GetMaxKey()const;
@@ -418,6 +419,18 @@ int BinaryTree::GetMaxKey(Node* subTreeRoot)const
 		return subTreeRoot->key;
 }
 
+int BinaryTree :: GetSumOfKeys() 
+{
+	std::vector<int> keys = {};
+	int sum = 0;
+	keys = MassiveOfNodes(keys);
+	for (int i = 0; i < keys.size(); i++) {
+		sum += keys[i];
+	}
+	return sum;
+
+}
+
 
 
 
@@ -447,6 +460,10 @@ int main()
 	for (int i=0; i < keys.size(); i++) {
 		std::cout << keys[i]<< " ";
 	}
+
+	int m;
+	m = t1.GetSumOfKeys();
+	std::cout << m << std::endl;
 	//int k = t1.GetMinKey();
 	//std::cout << k << std::endl;
 	return 0;
