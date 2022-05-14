@@ -80,6 +80,8 @@ public:
 	int GetMinKey(Node* subTreeRoot)const;
 	int GetMaxKey()const;
 	int GetMaxKey(Node* subTreeRoot)const;
+	bool CheckingForBalance();
+	bool CheckingForBalance( Node* subTreeRoot);
 	void print();
 	BinaryTree& operator = (BinaryTree& CopyTree);
 protected:
@@ -455,19 +457,35 @@ int BinaryTree :: GetSumOfKeys()
 
 }
 
+bool BinaryTree::CheckingForBalance()
+{
+	return CheckingForBalance(m_root);
+}
 
+bool BinaryTree::CheckingForBalance(Node* subTreeRoot)
+{
+	if (subTreeRoot == nullptr)
+		return false;
+	int height_l = heightNode(subTreeRoot->leftChild);
+	int height_r = heightNode(subTreeRoot->rightChild);
+	if ((height_r - height_l) == 0)
+		return true;
+	else
+		return false;
+
+}
 
 
 
 int main()
 {
-	int* a = new int[10];
-	for (int i = 0; i < 10; i++) {
+	int* a = new int[16];
+	for (int i = 0; i < 16; i++) {
 		a[i] = i+1;
 	}
 	
 
-	BinaryTree t1(a, 10);
+	BinaryTree t1(a, 16);
 	t1.printLevel(0);
 	std::cout << std::endl;
 	t1.printLevel(1);
@@ -489,7 +507,7 @@ int main()
 	m = t1.GetSumOfKeys();
 	std::cout << m << std::endl;*/
 
-	int k = t1.GetLevel(5);
+	int k = t1.CheckingForBalance();
 	std::cout << k << std::endl;
 	return 0;
 }
