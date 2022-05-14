@@ -62,6 +62,8 @@ public:
 	bool isEmpty(Node* root) const;
 	int height() const;
 	int heightNode(Node* p) const;
+	int GetLevel(int key);
+	int GetLevel(int FindKey, Node* subTreeRoot, int level);
 	int NumberOfNodes() const;
 	int NumberOfNodes(Node* root) const;
 	bool addNode(const int key);
@@ -347,6 +349,28 @@ int BinaryTree::heightNode(Node* root) const //ф-ция вычисления в
 	return h_r + 1; //Иначе высота корня данного поддерева больше высоты правого поддерева на 1
 }
 
+int BinaryTree::GetLevel(int FindKey)
+{
+	return GetLevel(FindKey, m_root, 0);
+}
+
+int BinaryTree::GetLevel(int FindKey, Node* subTreeRoot, int level)
+{
+	if (subTreeRoot == nullptr)
+		return -1;
+	if (FindKey == subTreeRoot->key)
+		return level;
+	else if (subTreeRoot->rightChild == nullptr && subTreeRoot->leftChild == nullptr) 
+		return -1;
+	int level_L = GetLevel(FindKey, subTreeRoot->leftChild, level + 1);
+	if (level_L != -1)
+		return level_L;
+	int level_R = GetLevel(FindKey, subTreeRoot->rightChild, level + 1);
+	if (level_L != -1)
+		return level_R;
+}
+
+
 int BinaryTree:: GetMinKey()const
 {
 	return GetMinKey(m_root);
@@ -444,7 +468,7 @@ int main()
 	
 
 	BinaryTree t1(a, 10);
-	/*t1.printLevel(0);
+	t1.printLevel(0);
 	std::cout << std::endl;
 	t1.printLevel(1);
 	std::cout << std::endl;
@@ -452,19 +476,20 @@ int main()
 	std::cout << std::endl;
 	t1.printLevel(3);
 	std::cout << std::endl;
-	t1.printLevel(4);*/
+	t1.printLevel(4);
 
 	// 
-	std::vector <int> keys = {};
+	/*std::vector <int> keys = {};
 	keys = t1.MassiveOfNodes(keys);
 	for (int i=0; i < keys.size(); i++) {
 		std::cout << keys[i]<< " ";
-	}
+	}*/
 
-	int m;
+	/*int m;
 	m = t1.GetSumOfKeys();
-	std::cout << m << std::endl;
-	//int k = t1.GetMinKey();
-	//std::cout << k << std::endl;
+	std::cout << m << std::endl;*/
+
+	int k = t1.GetLevel(5);
+	std::cout << k << std::endl;
 	return 0;
 }
