@@ -53,9 +53,9 @@ class BinaryTree
 public:
 	BinaryTree() = default; 
 	~BinaryTree(); //+
-	BinaryTree(const BinaryTree& BTree2); //+
+	BinaryTree(BinaryTree& BTree2); //+
 	BinaryTree(int* a, int n);
-	void copy(const Node* subTreeRoot, Node* copyRoot);
+	void copy(const Node* subTreeRoot, Node*& copyRoot);
 	Node* getRoot();
 	void DeleteSubTree(Node* subTreeRoot);
 	void clear();
@@ -90,17 +90,14 @@ protected:
 	Node* m_root = nullptr;
 };
 
-
-
-
 Node* BinaryTree::getRoot()
 {
 	return m_root;
 }
 
-BinaryTree::BinaryTree (const BinaryTree& subTreeRoot) //конструктор копирования
+BinaryTree::BinaryTree (BinaryTree& outTree) //конструктор копирования
 {
-	copy(subTreeRoot.m_root, this->m_root);
+	copy(outTree.getRoot(), this->m_root);
 }
 
 BinaryTree::BinaryTree(int* a, int n) //конструктор с двумя параметрами, где а-массив элементов, n-кол-во элементов
@@ -151,24 +148,23 @@ bool BinaryTree::addNode(Node* subTreeRoot, const int key) //Добавлени�
 }
 
 
-void BinaryTree::copy (const Node* subTreeRoot, Node* copyRoot)// Копирование
+void BinaryTree::copy (const Node* outTree, Node*& inTree)// Копирование
 {
-	if (subTreeRoot == nullptr)
+	if (outTree == nullptr)
 	{
 		return;
 	}
-	if (subTreeRoot == copyRoot) 
+	if (outTree == inTree) 
 	{
 		return;
 	}
-	if(copyRoot) { 
-		clear(copyRoot);
-		copyRoot = new Node;
-		copyRoot->key = subTreeRoot->key;
-		copyRoot->leftChild = nullptr;
-		copyRoot->rightChild = nullptr;
-		copy(subTreeRoot->leftChild, copyRoot->leftChild);
-		copy(subTreeRoot->rightChild, copyRoot->rightChild);
+	if(outTree) {
+		inTree = new Node;
+		inTree->key = outTree->key;
+		inTree->leftChild = nullptr;
+		inTree->rightChild = nullptr;
+		copy(outTree->leftChild, inTree->leftChild);
+		copy(outTree->rightChild, inTree->rightChild);
 	}	
 }
 
@@ -205,7 +201,7 @@ void BinaryTree::clear(Node* subTreeRoot)
 	if (subTreeRoot == m_root) {
 		subTreeRoot = nullptr;
 	}
-	delete subTreeRoot;
+	subTreeRoot = nullptr;
 }
 
 BinaryTree::~BinaryTree() //деструктор
@@ -289,15 +285,15 @@ bool BinaryTree::isEmpty(Node* subTreeRoot) const
 	return false;
 }
 
-BinaryTree& BinaryTree:: operator = (BinaryTree& CopyTree) 
+BinaryTree& BinaryTree:: operator = (BinaryTree& outTree) 
 {
-	if (&CopyTree == this) {
+	if (&outTree == this) {
 		std::cerr << "The same tree";
 		return *this;
 	}
 	else {
 		clear(this->m_root);
-		copy(CopyTree.m_root, this->m_root);
+		copy(outTree.getRoot(), this->m_root);
 	}
  }
 
@@ -500,26 +496,23 @@ bool BinaryTree::CheckingForBalance(Node* subTreeRoot) const
 
 int main()
 {
-	int* a = new int[16];
-	for (int i = 0; i < 16; i++) {
+	int* a = new int[10];
+	for (int i = 0; i < 10; i++) {
 		a[i] = i+1;
 	}
-	
 
-	BinaryTree t1(a, 16);
+	BinaryTree t1(a, 7);
 	t1.printLevel(0);
 	std::cout << std::endl;
 	t1.printLevel(1);
 	std::cout << std::endl;
 	t1.printLevel(2);
 	std::cout << std::endl;
-	t1.printLevel(3);
-	std::cout << std::endl;
-	t1.printLevel(4);
+	BinaryTree t2, t3;
 
-	t1.DeleteSubTree(t1.getRoot());
-
-	t1.print(); 
+	t2 = t3 = t1;
+	t2.print();
+	t3.print();
 
 	// 
 	/*std::vector <int> keys = {};
