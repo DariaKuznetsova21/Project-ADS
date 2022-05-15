@@ -72,7 +72,8 @@ public:
 	bool addNode(Node* subTreeRoot, const int key);
 	Node* findNode(int key);
 	Node* findNode(Node* SearchNode, int SearchKey);
-	int deleteNode(const int key);
+	bool deleteNode(const int key);
+	bool deleteNode(const int key, Node* subTreeRoot);
 	void printLevel(const int level);
 	void printLevel(Node* subTreeRoot, const int level, const int currentLevel = 0);
 	std::vector <int> MassiveOfNodes(std::vector<int> keys);
@@ -85,6 +86,8 @@ public:
 	bool CheckingForBalance() const;
 	bool CheckingForBalance( Node* subTreeRoot)const;
 	void print();
+	Node* ParentOfNode(const int key);
+	Node* ParentOfNode(const int key, Node* subTreeRoot);
 	BinaryTree& operator = (BinaryTree& CopyTree);
 protected:
 	Node* m_root = nullptr;
@@ -492,6 +495,138 @@ bool BinaryTree::CheckingForBalance(Node* subTreeRoot) const
 
 }
 
+Node* BinaryTree::ParentOfNode(const int key)
+{
+	return ParentOfNode(key, m_root);
+}
+
+Node* BinaryTree:: ParentOfNode(const int Searchkey, Node* subTreeRoot)
+{
+	if (subTreeRoot == nullptr)
+		return subTreeRoot;
+	if (m_root == subTreeRoot)
+		return nullptr;
+	if (subTreeRoot->leftChild)
+		if (subTreeRoot->leftChild->key == Searchkey)
+			return subTreeRoot;
+		else 
+			subTreeRoot = findNode(subTreeRoot->leftChild, Searchkey);
+
+	if (subTreeRoot->rightChild)
+		if (subTreeRoot->rightChild->key == Searchkey)
+			return subTreeRoot;
+		else
+			subTreeRoot = findNode(subTreeRoot->rightChild, Searchkey);
+}
+
+bool BinaryTree::deleteNode(const int key)
+{
+	Node* deletedNode = findNode(key);
+	if (deletedNode)
+		return deleteNode(key, deletedNode);
+	else
+		return false;
+}
+bool BinaryTree::deleteNode(const int key, Node* subTreeRoot)
+{
+	if (subTreeRoot == nullptr)
+		return false;
+	if (subTreeRoot == m_root) {
+		if (subTreeRoot->leftChild) {
+			m_root = subTreeRoot->leftChild;
+			if (subTreeRoot->rightChild) {
+				Node* additional = subTreeRoot->leftChild;
+				while(additional->leftChild){
+					additional = additional->leftChild;
+				}
+				additional->leftChild = subTreeRoot->rightChild;
+			}
+			delete subTreeRoot;
+			return true;
+		}
+		if (subTreeRoot->rightChild) {
+			m_root = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr) {
+		Node* additional = ParentOfNode(key);
+		if (additional) {
+			if (additional->leftChild == subTreeRoot)
+				additional->leftChild = nullptr;
+			else
+				additional->rightChild = nullptr;
+		}
+		delete subTreeRoot;
+		return true;
+	}
+	if (subTreeRoot->rightChild && subTreeRoot->leftChild)
+	{
+		Node* additional = ParentOfNode(key);
+		if (additional->leftChild == subTreeRoot)
+		{
+			additional->leftChild = subTreeRoot->leftChild;
+			Node* temp = m_root;
+			while (temp->leftChild)
+			{
+				temp = temp->leftChild;
+			}
+			temp->leftChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			additional->rightChild = subTreeRoot->leftChild;
+			Node* temp = m_root;
+			while (temp->leftChild)
+			{
+				temp = temp->leftChild;
+			}
+			temp->leftChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+	if (subTreeRoot->leftChild)
+	{
+		Node* additional = ParentOfNode(key);
+		if (additional->leftChild == subTreeRoot)
+		{
+			additional->leftChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			additional->rightChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+
+	if (subTreeRoot->rightChild)
+	{
+		Node* additional = ParentOfNode(key);
+		if (additional->leftChild == subTreeRoot)
+		{
+			additional->leftChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			additional->rightChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+
+	return false;
+
+
+}
 
 
 int main()
@@ -508,13 +643,11 @@ int main()
 	std::cout << std::endl;
 	t1.printLevel(2);
 	std::cout << std::endl;
-	BinaryTree t2, t3;
+	BinaryTree t2;
 
-	t2 = t3 = t1;
+	t2 = t1;
 	t2.print();
-	t3.print();
-
-	// 
+	
 	/*std::vector <int> keys = {};
 	keys = t1.MassiveOfNodes(keys);
 	for (int i=0; i < keys.size(); i++) {
