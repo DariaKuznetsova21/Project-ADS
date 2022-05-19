@@ -236,10 +236,11 @@ Node* BinaryTree::findNode(Node* subTreeRoot, int SearchKey)
 	if (subTreeRoot->rightChild)
 		if (subTreeRoot->rightChild->key == SearchKey)
 			return subTreeRoot->rightChild;
-	if (findNode(subTreeRoot->leftChild, SearchKey) == nullptr)
+	Node* additional = findNode(subTreeRoot->leftChild, SearchKey);
+	if (additional == nullptr || additional->key != SearchKey)
 		findNode(subTreeRoot->rightChild, SearchKey);
-	else if (findNode(subTreeRoot->leftChild, SearchKey)->key == SearchKey)
-		return findNode(subTreeRoot->leftChild, SearchKey);
+	else 
+		return additional;
 }
 
 
@@ -535,10 +536,16 @@ Node* BinaryTree:: ParentOfNode(const int SearchKey, Node* subTreeRoot)
 	if (subTreeRoot->rightChild)
 		if (subTreeRoot->rightChild->key == SearchKey)
 			return subTreeRoot;
-	if (findNode(subTreeRoot->leftChild, SearchKey) == nullptr)
-		findNode(subTreeRoot->rightChild, SearchKey);
-	else if (findNode(subTreeRoot->leftChild, SearchKey)->key == SearchKey)
-		return findNode(subTreeRoot->leftChild, SearchKey);
+	Node* additional = ParentOfNode(SearchKey, subTreeRoot->leftChild);
+	if (additional) {
+		if (additional->leftChild->key == SearchKey || additional->rightChild->key == SearchKey) {
+			return additional;
+		}
+		else
+			ParentOfNode(SearchKey, subTreeRoot->rightChild);
+	}
+	else
+		ParentOfNode(SearchKey, subTreeRoot->rightChild);
 }
 			
 
@@ -659,27 +666,33 @@ int main()
 	}
 
 	BinaryTree t1(a, 10);
-	//t1.printLevel(0);
-	//std::cout << std::endl;
-	//t1.printLevel(1);
-	//std::cout << std::endl;
-	//t1.printLevel(2);
-	//std::cout << std::endl;
-	
-	BinaryTree t2;
-
-	t2 = t1;
-	t2.print();
+	t1.printLevel(0);
 	std::cout << std::endl;
-
-	t2.deleteNode(5);
-
+	t1.printLevel(1);
+	std::cout << std::endl;
+	t1.printLevel(2);
+	std::cout << std::endl;
+	t1.printLevel(3);
+	std::cout << std::endl;
+	BinaryTree t2;
+	/*t2 = t1;
 	t2.print();
+	std::cout << std::endl;*/
 
+	t1.ParentOfNode(10);
+	std::cout << t1.deleteNode(2) << std::endl;
+	t1.printLevel(0);
+	std::cout << std::endl;
+	t1.printLevel(1);
+	std::cout << std::endl;
+	t1.printLevel(2);
+	std::cout << std::endl;
+	t1.printLevel(3);
+	std::cout << std::endl;
 	
-	//Node* Nfinded = t2.findNode(6);
-	//Nfinded == nullptr ? std::cout << "Null" << std::endl : std::cout << Nfinded->KeyOfNode() << std::endl;
-	//
+	/*Node* Nfinded = t2.findNode(6);
+	Nfinded == nullptr ? std::cout << "Null" << std::endl : std::cout << Nfinded->KeyOfNode() << std::endl;*/
+	
 
 	
 	
