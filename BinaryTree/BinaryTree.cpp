@@ -1,6 +1,7 @@
 #include <random>
 #include <iostream>
 
+
 #pragma once
 
 #include <vector>
@@ -220,16 +221,28 @@ Node* BinaryTree::findNode(int key)
 	return SearchNode;
 }
 
+
 Node* BinaryTree::findNode(Node* subTreeRoot, int SearchKey)
 {
 	if (subTreeRoot == nullptr)
-		return subTreeRoot;
+		return nullptr;
 	if (SearchKey == subTreeRoot->key)
 		return subTreeRoot;
-	subTreeRoot = findNode(subTreeRoot->leftChild, SearchKey);
-	subTreeRoot = findNode(subTreeRoot->rightChild, SearchKey);
-	return subTreeRoot;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return nullptr;
+	if (subTreeRoot->leftChild) 
+		if (subTreeRoot->leftChild->key == SearchKey)
+			return subTreeRoot->leftChild;
+	if (subTreeRoot->rightChild)
+		if (subTreeRoot->rightChild->key == SearchKey)
+			return subTreeRoot->rightChild;
+	if (findNode(subTreeRoot->leftChild, SearchKey) == nullptr)
+		findNode(subTreeRoot->rightChild, SearchKey);
+	else if (findNode(subTreeRoot->leftChild, SearchKey)->key == SearchKey)
+		return findNode(subTreeRoot->leftChild, SearchKey);
 }
+
+
 
 void BinaryTree:: print() 
 {
@@ -362,13 +375,21 @@ int BinaryTree:: height() const
 }
 int BinaryTree::heightNode(Node* subTreeRoot) const
 {
+	int HieghtL = 0, HieghtR = 0;
 	if (subTreeRoot == nullptr)
 		return 0;
-	int h_l = heightNode(subTreeRoot->leftChild);
-	int h_r = heightNode(subTreeRoot->rightChild);
-	if (h_l > h_r) 
-		return h_l + 1; 
-	return h_r + 1;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return 1;
+	if (subTreeRoot->leftChild) {
+		HieghtL = heightNode(subTreeRoot->leftChild);
+	}
+
+	if (subTreeRoot->rightChild) {
+		HieghtR = heightNode(subTreeRoot->rightChild);
+	}
+	if (HieghtL > HieghtR)
+		return HieghtL + 1;
+	return HieghtR + 1;
 }
 
 int BinaryTree::GetLevel(int FindKey)
@@ -500,24 +521,26 @@ Node* BinaryTree::ParentOfNode(const int key)
 	return ParentOfNode(key, m_root);
 }
 
-Node* BinaryTree:: ParentOfNode(const int Searchkey, Node* subTreeRoot)
+Node* BinaryTree:: ParentOfNode(const int SearchKey, Node* subTreeRoot)
 {
 	if (subTreeRoot == nullptr)
-		return subTreeRoot;
-	if (m_root == subTreeRoot)
+		return nullptr;
+	if (SearchKey == subTreeRoot->key)
+		return nullptr;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
 		return nullptr;
 	if (subTreeRoot->leftChild)
-		if (subTreeRoot->leftChild->key == Searchkey)
+		if (subTreeRoot->leftChild->key == SearchKey)
 			return subTreeRoot;
-		else 
-			subTreeRoot = findNode(subTreeRoot->leftChild, Searchkey);
-
 	if (subTreeRoot->rightChild)
-		if (subTreeRoot->rightChild->key == Searchkey)
+		if (subTreeRoot->rightChild->key == SearchKey)
 			return subTreeRoot;
-		else
-			subTreeRoot = findNode(subTreeRoot->rightChild, Searchkey);
+	if (findNode(subTreeRoot->leftChild, SearchKey) == nullptr)
+		findNode(subTreeRoot->rightChild, SearchKey);
+	else if (findNode(subTreeRoot->leftChild, SearchKey)->key == SearchKey)
+		return findNode(subTreeRoot->leftChild, SearchKey);
 }
+			
 
 bool BinaryTree::deleteNode(const int key)
 {
@@ -628,7 +651,6 @@ bool BinaryTree::deleteNode(const int key, Node* subTreeRoot)
 
 }
 
-
 int main()
 {
 	int* a = new int[10];
@@ -636,17 +658,30 @@ int main()
 		a[i] = i+1;
 	}
 
-	BinaryTree t1(a, 7);
-	t1.printLevel(0);
-	std::cout << std::endl;
-	t1.printLevel(1);
-	std::cout << std::endl;
-	t1.printLevel(2);
-	std::cout << std::endl;
+	BinaryTree t1(a, 10);
+	//t1.printLevel(0);
+	//std::cout << std::endl;
+	//t1.printLevel(1);
+	//std::cout << std::endl;
+	//t1.printLevel(2);
+	//std::cout << std::endl;
+	
 	BinaryTree t2;
 
 	t2 = t1;
 	t2.print();
+	std::cout << std::endl;
+
+	t2.deleteNode(5);
+
+	t2.print();
+
+	
+	//Node* Nfinded = t2.findNode(6);
+	//Nfinded == nullptr ? std::cout << "Null" << std::endl : std::cout << Nfinded->KeyOfNode() << std::endl;
+	//
+
+	
 	
 	/*std::vector <int> keys = {};
 	keys = t1.MassiveOfNodes(keys);
