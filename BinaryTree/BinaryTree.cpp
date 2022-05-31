@@ -58,37 +58,38 @@ public:
 	BinaryTree(int* a, int n);
 	void copy(const Node* subTreeRoot, Node*& copyRoot);
 	Node* getRoot();
-	void DeleteSubTree(Node* subTreeRoot);
+	void DeleteSubTree(Node*& subTreeRoot);
 	void clear();
-	void clear(Node* subTreeRoot);
-	bool isEmpty() const;
-	bool isEmpty(const Node* subTreeRoot) const;
-	int height() const;
-	int heightNode(const Node* subTreeRoot) const;
-	int GetLevel(const int key) const;
+	void clear(Node*& subTreeRoot);
+	bool isEmpty();
+	bool isEmpty(Node*& subTreeRoot) const;
+	int height();
+	int heightNode(Node*& subTreeRoot) const;
+	int GetLevel(const int key);
 	int GetLevel(const int FindKey, Node* subTreeRoot, const int level)const;
-	int NumberOfNodes() const;
-	int NumberOfNodes(const Node* subTreeRoot) const;
+	int NumberOfNodes();
+	int NumberOfNodes(Node *& subTreeRoot) const;
 	bool addNode(const int key);
-	bool addNode(Node* subTreeRoot, const int key);
+	bool addNode(Node*& subTreeRoot, const int key);
 	Node* findNode(const int key);
-	Node* findNode(Node* SearchNode, const int SearchKey) const;
+	Node* findNode(Node*& SearchNode, const int SearchKey) const;
 	bool deleteNode(const int key);
-	bool deleteNode(const int key, Node* subTreeRoot);
-	void printLevel(const int level) const;
+	bool deleteNode(const int key, Node*& subTreeRoot);
+	void printLevel();
+	void printLevel(const int level);
 	void printLevel(Node* subTreeRoot, const int level, const int currentLevel = 0) const;
-	std::vector <int> MassiveOfNodes(std::vector<int> keys) const;
-	std::vector <int> MassiveOfNodes(const Node* subTreeRoot, std:: vector<int> keys) const;
-	int GetSumOfKeys() const;
-	int GetMinKey()const;
-	int GetMinKey(Node* subTreeRoot)const;
-	int GetMaxKey()const;
-	int GetMaxKey(Node* subTreeRoot)const;
-	bool CheckingForBalance() const;
-	bool CheckingForBalance(Node* subTreeRoot) const;
-	void print() const;
-	Node* ParentOfNode(const int key) const;
-	Node* ParentOfNode(const int key, Node* subTreeRoot) const;
+	std::vector <int> MassiveOfNodes(std::vector<int> keys);
+	std::vector <int> MassiveOfNodes(Node*& subTreeRoot, std:: vector<int> keys) const;
+	int GetSumOfKeys();
+	int GetMinKey();
+	int GetMinKey(Node*& subTreeRoot)const;
+	int GetMaxKey();
+	int GetMaxKey(Node*& subTreeRoot)const;
+	bool CheckingForBalance();
+	bool CheckingForBalance(Node*& subTreeRoot) const;
+	void print();
+	Node* ParentOfNode(const int key);
+	Node* ParentOfNode(const int key, Node*& subTreeRoot) const;
 	BinaryTree& operator = (BinaryTree& CopyTree);
 protected:
 	Node* m_root = nullptr;
@@ -119,7 +120,7 @@ bool BinaryTree::addNode(const int key)
 }
 
 
-bool BinaryTree::addNode(Node* subTreeRoot, const int key) //Добавление узла
+bool BinaryTree::addNode(Node*& subTreeRoot, const int key) //Добавление узла
 {
 	if (subTreeRoot == nullptr) {
 		if (m_root == nullptr) {
@@ -172,7 +173,7 @@ void BinaryTree::copy (const Node* outTree, Node*& inTree)// Копирован�
 	}	
 }
 
-void BinaryTree::DeleteSubTree(Node* subTreeRoot)
+void BinaryTree::DeleteSubTree(Node*& subTreeRoot)
 {
 	if (subTreeRoot == nullptr)
 		return;
@@ -194,7 +195,7 @@ void BinaryTree::clear()
 }
 
 
-void BinaryTree::clear(Node* subTreeRoot)
+void BinaryTree::clear(Node *& subTreeRoot)
 {
 	if (subTreeRoot == nullptr)
 		return;
@@ -222,7 +223,7 @@ Node* BinaryTree::findNode(int key)
 }
 
 
-Node* BinaryTree::findNode(Node* subTreeRoot, int SearchKey) const
+Node* BinaryTree::findNode(Node*& subTreeRoot, int SearchKey) const
 {
 	if (subTreeRoot == nullptr)
 		return nullptr;
@@ -245,7 +246,7 @@ Node* BinaryTree::findNode(Node* subTreeRoot, int SearchKey) const
 
 
 
-void BinaryTree:: print() const
+void BinaryTree:: print()
 {
 	using std::cout;
 	using std::endl;
@@ -259,9 +260,16 @@ void BinaryTree:: print() const
 	}
 }
 
+void BinaryTree::printLevel()
+{
+	for (int i = 0; i < height(); i++) {
+		printLevel(i);
+		std::cout << std::endl;
+	}
+}
 
 
-void BinaryTree:: printLevel(const int level) const
+void BinaryTree:: printLevel(const int level)
 {
 	printLevel(m_root, level, 0);
 }
@@ -276,6 +284,7 @@ void BinaryTree :: printLevel(Node* subTreeRoot, const int level, const int curr
 		if (subTreeRoot == m_root) {
 			cout << "Tree is empty" << endl;
 		}
+		cout << "Null" << "  ";
 		return;
 	}
 
@@ -290,12 +299,12 @@ void BinaryTree :: printLevel(Node* subTreeRoot, const int level, const int curr
 }
 
 
-bool BinaryTree::isEmpty() const
+bool BinaryTree::isEmpty()
 {
 	return isEmpty(m_root);
 }
 
-bool BinaryTree::isEmpty(const Node* subTreeRoot) const
+bool BinaryTree::isEmpty(Node*& subTreeRoot) const
 {
 	if (subTreeRoot == nullptr)
 		return true;
@@ -314,13 +323,13 @@ BinaryTree& BinaryTree:: operator = (BinaryTree& outTree)
 	}
  }
 
-int BinaryTree::NumberOfNodes() const 
+int BinaryTree::NumberOfNodes() 
 {
 	return NumberOfNodes(m_root);
 }
 
 
-int BinaryTree::NumberOfNodes(const Node* subTreeRoot) const
+int BinaryTree::NumberOfNodes(Node*& subTreeRoot) const
 {
 	int left, right;
 	if (subTreeRoot == nullptr)
@@ -339,16 +348,14 @@ int BinaryTree::NumberOfNodes(const Node* subTreeRoot) const
 
 }
 
-std::vector <int> BinaryTree::MassiveOfNodes(std::vector<int> keys) const
+std::vector <int> BinaryTree::MassiveOfNodes(std::vector<int> keys)
 
 {
 	return MassiveOfNodes(m_root, keys);
 }
 
-std::vector <int> BinaryTree::MassiveOfNodes(const Node* subTreeRoot, std::vector<int> keys) const
+std::vector <int> BinaryTree::MassiveOfNodes(Node*& subTreeRoot, std::vector<int> keys) const
 {
-	int c = NumberOfNodes(subTreeRoot);
-	int left, right;
 	
 	if (subTreeRoot == nullptr) {
 		return keys;
@@ -370,11 +377,11 @@ std::vector <int> BinaryTree::MassiveOfNodes(const Node* subTreeRoot, std::vecto
 
 
 
-int BinaryTree:: height() const
+int BinaryTree:: height()
 {
 	return heightNode(m_root);
 }
-int BinaryTree::heightNode(const Node* subTreeRoot) const
+int BinaryTree::heightNode(Node*& subTreeRoot) const
 {
 	int HieghtL = 0, HieghtR = 0;
 	if (subTreeRoot == nullptr)
@@ -386,14 +393,14 @@ int BinaryTree::heightNode(const Node* subTreeRoot) const
 	}
 
 	if (subTreeRoot->rightChild) {
-		HieghtR = heightNode(subTreeRoot->rightChild);
+		HieghtR = heightNode(subTreeRoot-> rightChild);
 	}
 	if (HieghtL > HieghtR)
 		return HieghtL + 1;
 	return HieghtR + 1;
 }
 
-int BinaryTree::GetLevel(const int FindKey) const
+int BinaryTree::GetLevel(const int FindKey)
 {
 	return GetLevel(FindKey, m_root, 0);
 }
@@ -415,15 +422,15 @@ int BinaryTree::GetLevel(const int FindKey, Node* subTreeRoot, const int level) 
 }
 
 
-int BinaryTree:: GetMinKey()const
+int BinaryTree:: GetMinKey()
 {
 	return GetMinKey(m_root);
 }
-int BinaryTree::GetMinKey(Node* subTreeRoot)const
+int BinaryTree::GetMinKey(Node*& subTreeRoot)const
 {
-	int minL =subTreeRoot->key, minR=subTreeRoot->key;
 	if (subTreeRoot == nullptr)
 		return -1;
+	int minL = subTreeRoot->key, minR = subTreeRoot->key;
 	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
 		return subTreeRoot->key;
 	if (subTreeRoot->leftChild != nullptr) {
@@ -451,15 +458,15 @@ int BinaryTree::GetMinKey(Node* subTreeRoot)const
 		return subTreeRoot->key;
 }
 
-int BinaryTree:: GetMaxKey()const
+int BinaryTree:: GetMaxKey()
 {
 	return GetMaxKey(m_root);
 }
-int BinaryTree::GetMaxKey(Node* subTreeRoot)const
+int BinaryTree::GetMaxKey(Node*& subTreeRoot)const
 {
-	int maxL = subTreeRoot->key, maxR = subTreeRoot->key;
 	if (subTreeRoot == nullptr)
 		return -1;
+	int maxL = subTreeRoot->key, maxR = subTreeRoot->key;
 	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
 		return subTreeRoot->key;
 	if (subTreeRoot->leftChild != nullptr) {
@@ -487,7 +494,7 @@ int BinaryTree::GetMaxKey(Node* subTreeRoot)const
 		return subTreeRoot->key;
 }
 
-int BinaryTree :: GetSumOfKeys()  const
+int BinaryTree :: GetSumOfKeys()
 {
 	std::vector<int> keys = {};
 	int sum = 0;
@@ -499,12 +506,12 @@ int BinaryTree :: GetSumOfKeys()  const
 
 }
 
-bool BinaryTree::CheckingForBalance() const
+bool BinaryTree::CheckingForBalance()
 {
 	return CheckingForBalance(m_root);
 }
 
-bool BinaryTree::CheckingForBalance(Node* subTreeRoot) const
+bool BinaryTree::CheckingForBalance(Node*& subTreeRoot) const
 {
 	if (subTreeRoot == nullptr)
 		return false;
@@ -517,12 +524,12 @@ bool BinaryTree::CheckingForBalance(Node* subTreeRoot) const
 
 }
 
-Node* BinaryTree::ParentOfNode(const int key) const
+Node* BinaryTree::ParentOfNode(const int key)
 {
 	return ParentOfNode(key, m_root);
 }
 
-Node* BinaryTree:: ParentOfNode(const int SearchKey, Node* subTreeRoot) const
+Node* BinaryTree:: ParentOfNode(const int SearchKey, Node*& subTreeRoot) const
 {
 	if (subTreeRoot == nullptr)
 		return nullptr;
@@ -557,7 +564,7 @@ bool BinaryTree::deleteNode(const int key)
 	else
 		return false;
 }
-bool BinaryTree::deleteNode(const int key, Node* subTreeRoot)
+bool BinaryTree::deleteNode(const int key, Node*& subTreeRoot)
 {
 	if (subTreeRoot == nullptr)
 		return false;
@@ -579,6 +586,9 @@ bool BinaryTree::deleteNode(const int key, Node* subTreeRoot)
 			delete subTreeRoot;
 			return true;
 		}
+		delete m_root;
+		m_root = nullptr;
+		return true;
 	}
 	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr) {
 		Node* additional = ParentOfNode(key);
@@ -658,8 +668,40 @@ bool BinaryTree::deleteNode(const int key, Node* subTreeRoot)
 
 }
 
+bool test(const int treeSize = 10)
+{
+	BinaryTree bt;
+
+
+
+	for (int i = 0; i < treeSize; i++) {
+		bt.addNode(i);
+		std::cout << bt.NumberOfNodes() << " " << bt.height() << std::endl;
+	}
+
+	std::cout << "------------------------------------------" << std::endl;
+
+	bt.printLevel();
+
+	for (int i = 0; i < treeSize; i++) {
+		bt.deleteNode(i);
+		std::cout << bt.NumberOfNodes() << " " << bt.height() << std::endl;
+	}
+
+	std::cout << "------------------------------------------" << std::endl;
+
+	bt.print();
+	std::cout << "|" << std::endl;
+	//std::cout << bt.heightNode(7) << std::endl;
+
+	return true;
+}
+
+
+
 int main()
 {
+	return test();
 	int* a = new int[10];
 	for (int i = 0; i < 10; i++) {
 		a[i] = i+1;
