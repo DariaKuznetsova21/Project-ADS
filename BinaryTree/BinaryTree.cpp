@@ -548,14 +548,13 @@ Node* BinaryTree:: ParentOfNode(const int SearchKey, Node*& subTreeRoot) const
 			return subTreeRoot;
 	Node* additional = ParentOfNode(SearchKey, subTreeRoot->leftChild);
 	if (additional) {
-		if (additional->leftChild->key == SearchKey || additional->rightChild->key == SearchKey) {
-			return additional;
-		}
-		else
-			ParentOfNode(SearchKey, subTreeRoot->rightChild);
+		return additional;
 	}
-	else
-		ParentOfNode(SearchKey, subTreeRoot->rightChild);
+	additional = ParentOfNode(SearchKey, subTreeRoot->rightChild);
+	if (additional) {
+		return additional;
+	}
+	return nullptr;
 }
 			
 
@@ -671,20 +670,25 @@ bool BinaryTree::deleteNode(const int key, Node*& subTreeRoot)
 
 }
 
-bool test(const int treeSize = 10)
+bool test(const int treeSize = 150)
 {
 	BinaryTree bt;
 
-
-
+	std::vector<int> keys;
 	for (int i = 0; i < treeSize; i++) {
-		bt.addNode(i);
+		keys.push_back(i);
+	}
+
+	for (int i = treeSize; i > 0; i--) {
+		int keyIndex = rand() % i;
+		bt.addNode(keys[keyIndex]);
+		keys.erase(keys.begin() + keyIndex);
 		std::cout << bt.NumberOfNodes() << " " << bt.height() << std::endl;
 	}
 
 	std::cout << "------------------------------------------" << std::endl;
 
-	bt.printLevel();
+	//bt.printLevel();
 
 	for (int i = 0; i < treeSize; i++) {
 		bt.deleteNode(i);
@@ -719,6 +723,13 @@ int main()
 	std::cout << std::endl;
 	t1.printLevel(3);
 	std::cout << std::endl;
+	int key;
+	do {
+		std::cin >> key;
+		std::cout << (t1.deleteNode(key) ? "true" : "false") << std::endl;
+	} while (key > 0);
+	t1.printLevel();
+	return 0;
 	BinaryTree t2;
 	/*t2 = t1;
 	t2.print();
