@@ -279,21 +279,24 @@ void BinaryTree :: printLevel(Node* subTreeRoot, const int level, const int curr
 	using std::cout;
 	using std::endl;
 
-
-	if (subTreeRoot == nullptr) {
-		if (subTreeRoot == m_root) {
-			cout << "Tree is empty" << endl;
-		}
-		cout << "Null" << "  ";
-		return;
-	}
-
 	if (currentLevel == level) {
-		cout << subTreeRoot->key << "   ";
+		if (subTreeRoot == nullptr) {
+			cout << "Null" << "  ";
+		}
+		else {
+			cout << subTreeRoot->key << "   ";
+		}
 	}
 	else if (currentLevel < level) {
-		printLevel(subTreeRoot->leftChild, level, currentLevel + 1);
-		printLevel(subTreeRoot->rightChild, level, currentLevel + 1);
+		if (subTreeRoot == nullptr) {
+			printLevel(nullptr, level, currentLevel + 1);
+			printLevel(nullptr, level, currentLevel + 1);
+		}
+		else {
+			printLevel(subTreeRoot->leftChild, level, currentLevel + 1);
+			printLevel(subTreeRoot->rightChild, level, currentLevel + 1);
+		}
+		
 	}
 
 }
