@@ -14,6 +14,7 @@ private:
 	Node* leftChild, * rightChild;
 public:
 	friend class BinaryTree;
+	friend class SearchBTree;
 	Node()
 	{
 		key = 0;
@@ -670,9 +671,366 @@ bool BinaryTree::deleteNode(const int key, Node*& subTreeRoot)
 
 }
 
-bool test(const int treeSize = 150)
+
+
+class SearchBTree : public BinaryTree
 {
-	BinaryTree bt;
+public:
+	SearchBTree() = default;
+	~SearchBTree(); //+
+	SearchBTree(SearchBTree& BTree2); //+
+	SearchBTree(int* a, int n);
+	SearchBTree copy(const Node * subTreeRoot, Node * &copyRoot);
+	int GetLevel(const int key);
+	int GetLevel(const int FindKey, Node * subTreeRoot, const int level)const;
+	bool addNode(const int key);
+	bool addNode(Node * &subTreeRoot, const int key);
+	Node* findNode(const int key);
+	Node* findNode(Node * &SearchNode, const int SearchKey) const;
+	bool deleteNode(const int key);
+	bool deleteNode(const int key, Node * &subTreeRoot);
+	int GetMinKey();
+	int GetMinKey(Node * &subTreeRoot)const;
+	int GetMaxKey();
+	int GetMaxKey(Node * &subTreeRoot)const;
+	Node* ParentOfNode(const int key);
+	Node* ParentOfNode(const int key, Node * &subTreeRoot) const;
+	SearchBTree& operator= (SearchBTree& CopyTree);
+protected:
+	Node* m_root = nullptr;
+
+};
+
+SearchBTree::SearchBTree(SearchBTree& outTree) //конструктор копирования
+{
+	copy(outTree.getRoot(), this->m_root);
+}
+
+SearchBTree SearchBTree:: copy(const Node* outTree, Node*& inTree)// Копирование
+{
+	SearchBTree Tree;
+
+	if (outTree == nullptr)
+	{
+		return Tree;
+	}
+	if (outTree == inTree)
+	{
+		return Tree;
+	}
+	if (outTree) {
+		Tree.copy(outTree, inTree);
+		return Tree;
+	}
+}
+
+SearchBTree::SearchBTree(int* a, int n) //конструктор с двумя параметрами, где а-массив элементов, n-кол-во элементов
+{
+	m_root = nullptr;
+	for (int i = 0; i < n; i++)
+	{
+		addNode(m_root, a[i]);
+	}
+}
+
+
+SearchBTree::~SearchBTree() //деструктор
+{
+	if (m_root)
+		clear(m_root);
+}
+
+bool SearchBTree::addNode(const int key)
+{
+	return addNode(m_root, key);
+}
+
+
+bool SearchBTree::addNode(Node*& subTreeRoot, const int key) //Добавление узла
+{
+	if (subTreeRoot == nullptr) {
+		if (m_root == nullptr) {
+			m_root = new Node(key);
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+	if(subTreeRoot->KeyOfNode() <= key)
+	{
+		if (subTreeRoot->rightChild == nullptr) {
+			subTreeRoot->rightChild = new Node(key);
+			return true;
+		}
+		else {
+			addNode(subTreeRoot->rightChild, key);
+			return true;
+		}
+	}
+	else {
+		if (subTreeRoot->leftChild == nullptr) {
+			subTreeRoot->leftChild = new Node(key);
+			return true;
+		}
+		else {
+			addNode(subTreeRoot->leftChild, key);
+			return true;
+		}
+	}
+}
+int SearchBTree::GetLevel(const int FindKey)
+{
+	return GetLevel(FindKey, m_root, 0);
+}
+
+int SearchBTree::GetLevel(const int FindKey, Node* subTreeRoot, const int level) const
+{
+	if (subTreeRoot == nullptr)
+		return -1;
+	if (FindKey == subTreeRoot->key)
+		return level;
+	else if (subTreeRoot->rightChild == nullptr && subTreeRoot->leftChild == nullptr)
+		return -1;
+	if (FindKey >= subTreeRoot->key) 
+	{
+		int level_R = GetLevel(FindKey, subTreeRoot->rightChild, level + 1);
+		if (level_R != -1)
+			return level_R;
+	}
+	else {
+		int level_L = GetLevel(FindKey, subTreeRoot->leftChild, level + 1);
+		if (level_L != -1)
+			return level_L;
+	}
+}
+
+Node* SearchBTree::findNode(int key)
+{
+	Node* SearchNode = findNode(m_root, key);
+	return SearchNode;
+}
+
+
+Node* SearchBTree::findNode(Node*& subTreeRoot, int SearchKey) const
+{
+	if (subTreeRoot == nullptr)
+		return nullptr;
+	if (SearchKey == subTreeRoot->key)
+		return subTreeRoot;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return nullptr;
+	if (subTreeRoot->rightChild && SearchKey >= subTreeRoot->key) {
+		if (subTreeRoot->rightChild->key == SearchKey)
+			return subTreeRoot->rightChild;
+		else 
+			return findNode(subTreeRoot->rightChild, SearchKey);
+	}
+	else if (subTreeRoot->leftChild && SearchKey < subTreeRoot->key) 
+	{
+		if (subTreeRoot->leftChild->key == SearchKey)
+			return subTreeRoot->leftChild;
+		else
+			return findNode(subTreeRoot->leftChild, SearchKey);
+	}
+}
+
+int SearchBTree::GetMinKey()
+{
+	return GetMinKey(m_root);
+}
+int SearchBTree::GetMinKey(Node*& subTreeRoot)const
+{
+	if (subTreeRoot == nullptr)
+		return -1;
+	int min = subTreeRoot->key;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return subTreeRoot->key;
+	if (subTreeRoot->leftChild) {
+		if (subTreeRoot->leftChild->key < min) {
+			min = subTreeRoot->leftChild->key;
+		}
+	}
+	return min;
+}
+
+int SearchBTree::GetMaxKey()
+{
+	return GetMaxKey(m_root);
+}
+int SearchBTree::GetMaxKey(Node*& subTreeRoot)const
+{
+	if (subTreeRoot == nullptr)
+		return -1;
+	int max = subTreeRoot->key;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return subTreeRoot->key;
+	if (subTreeRoot->rightChild) {
+		if (subTreeRoot->rightChild->key > max) {
+			max = subTreeRoot->leftChild->key;
+		}
+		max = GetMaxKey(subTreeRoot->rightChild);
+	}
+	return max;
+}
+
+Node* SearchBTree::ParentOfNode(const int key)
+{
+	return ParentOfNode(key, m_root);
+}
+
+Node* SearchBTree::ParentOfNode(const int SearchKey, Node*& subTreeRoot) const
+{
+	if (subTreeRoot == nullptr)
+		return nullptr;
+	if (SearchKey == subTreeRoot->key)
+		return nullptr;
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr)
+		return nullptr;
+	if (subTreeRoot->leftChild && subTreeRoot->leftChild->key >=SearchKey)
+		if (subTreeRoot->leftChild->key == SearchKey)
+			return subTreeRoot;
+	if (subTreeRoot->rightChild && subTreeRoot->rightChild->key < SearchKey)
+		if (subTreeRoot->rightChild->key == SearchKey)
+			return subTreeRoot;
+	Node* additional = ParentOfNode(SearchKey, subTreeRoot->leftChild);
+	if (additional) {
+		return additional;
+	}
+	additional = ParentOfNode(SearchKey, subTreeRoot->rightChild);
+	if (additional) {
+		return additional;
+	}
+	return nullptr;
+}
+
+
+bool SearchBTree::deleteNode(const int key)
+{
+	Node* deletedNode = findNode(key);
+	if (deletedNode)
+		return deleteNode(key, deletedNode);
+	else
+		return false;
+}
+bool SearchBTree::deleteNode(const int key, Node*& subTreeRoot)
+{  
+	if (subTreeRoot == nullptr)
+		return false;
+	if (subTreeRoot == m_root) {
+		if (subTreeRoot->rightChild) {
+			m_root = subTreeRoot->rightChild;
+			if (subTreeRoot->leftChild) {
+				Node* node = subTreeRoot->rightChild;
+				while (node->leftChild->key < subTreeRoot->leftChild->key) {
+						node = node->rightChild;
+				}
+				node->leftChild = subTreeRoot->leftChild;
+			}
+			delete subTreeRoot;
+			return true;
+		}
+		if (subTreeRoot->leftChild) {
+			m_root = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+		delete m_root;
+		m_root = nullptr;
+		return true;
+	}
+	if (subTreeRoot->leftChild == nullptr && subTreeRoot->rightChild == nullptr) {
+		Node* additional = ParentOfNode(key);
+		if (additional) {
+			if (additional->leftChild == subTreeRoot)
+				additional->leftChild = nullptr;
+			else
+				additional->rightChild = nullptr;
+		}
+		delete subTreeRoot;
+		return true;
+	}
+	if (subTreeRoot->rightChild && subTreeRoot->leftChild)
+	{
+		Node* parent = ParentOfNode(key);
+		if (parent->leftChild == subTreeRoot)
+		{
+			parent->leftChild = subTreeRoot->rightChild;
+			Node* additional = subTreeRoot->rightChild;
+			while (additional->leftChild)
+			{
+				additional = additional->leftChild;
+			}
+			additional->leftChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			parent->rightChild = subTreeRoot->rightChild;
+			Node* additional = subTreeRoot->rightChild;
+			while (additional->leftChild)
+			{
+				additional = additional->leftChild;
+			}
+			additional->leftChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+	if (subTreeRoot->leftChild)
+	{
+		Node* parent = ParentOfNode(key);
+		if (parent->leftChild == subTreeRoot)
+		{
+			parent->leftChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			parent->rightChild = subTreeRoot->leftChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+
+	if (subTreeRoot->rightChild)
+	{
+		Node* parent = ParentOfNode(key);
+		if (parent->leftChild == subTreeRoot)
+		{
+			parent->leftChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+		else
+		{
+			parent->rightChild = subTreeRoot->rightChild;
+			delete subTreeRoot;
+			return true;
+		}
+	}
+
+	return false;
+
+
+}
+SearchBTree& SearchBTree:: operator= (SearchBTree& outTree)
+{
+	if (&outTree == this) {
+		std::cerr << "The same tree";
+		return *this;
+	}
+	else {
+		BinaryTree::operator=(outTree);
+	}
+}
+
+bool test(const int treeSize = 10)
+{
+	SearchBTree bt;
 
 	std::vector<int> keys;
 	for (int i = 0; i < treeSize; i++) {
@@ -688,7 +1046,7 @@ bool test(const int treeSize = 150)
 
 	std::cout << "------------------------------------------" << std::endl;
 
-	//bt.printLevel();
+	bt.printLevel();
 
 	for (int i = 0; i < treeSize; i++) {
 		bt.deleteNode(i);
@@ -704,33 +1062,32 @@ bool test(const int treeSize = 150)
 	return true;
 }
 
-
-
 int main()
 {
-	return test();
+	//return test();
 	int* a = new int[10];
 	for (int i = 0; i < 10; i++) {
-		a[i] = i+1;
+		a[i] = rand()%10;
+		std::cout << a[i];
 	}
+	std::cout << std::endl;
 
-	BinaryTree t1(a, 10);
-	t1.printLevel(0);
+	SearchBTree t1(a, 10);
+	std::cout << t1.GetMinKey() << std::endl;
+	//t1.printLevel();
 	std::cout << std::endl;
-	t1.printLevel(1);
-	std::cout << std::endl;
-	t1.printLevel(2);
-	std::cout << std::endl;
-	t1.printLevel(3);
-	std::cout << std::endl;
+	BinaryTree& t2(t1);
+	t2.printLevel();
+	return 0;
+
 	int key;
 	do {
 		std::cin >> key;
 		std::cout << (t1.deleteNode(key) ? "true" : "false") << std::endl;
 	} while (key > 0);
-	t1.printLevel();
+	
 	return 0;
-	BinaryTree t2;
+	//BinaryTree t2;
 	/*t2 = t1;
 	t2.print();
 	std::cout << std::endl;*/
