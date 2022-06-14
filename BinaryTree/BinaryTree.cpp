@@ -791,7 +791,6 @@ public:
 	
 	SearchBTree& operator= (SearchBTree& CopyTree);
 protected:
-	Node* m_root = nullptr;
 	Node* ParentOfNode(const int key);
 	Node* ParentOfNode(const int key, Node* subTreeRoot) const;
 	Node* findNode(const int key);
@@ -988,7 +987,7 @@ Node* SearchBTree::ParentOfNode(const int SearchKey, Node* subTreeRoot) const
 	if (subTreeRoot->leftChild && subTreeRoot->leftChild->key >=SearchKey)
 		if (subTreeRoot->leftChild->key == SearchKey)
 			return subTreeRoot;
-	if (subTreeRoot->rightChild && subTreeRoot->rightChild->key < SearchKey)
+	if (subTreeRoot->rightChild && subTreeRoot->rightChild->key <= SearchKey)
 		if (subTreeRoot->rightChild->key == SearchKey)
 			return subTreeRoot;
 	Node* additional = ParentOfNode(SearchKey, subTreeRoot->leftChild);
@@ -1245,8 +1244,6 @@ bool testSearchTreeAsBinaryTree(int size)
 		searchTreeRef.addNode(i);
 		nodesKeys.push_back(i);
 	}
-	searchTreeRef.printLevel();
-	return 0;
 	int index, key;
 
 	searchTree.deleteNode(13);
@@ -1300,7 +1297,7 @@ bool testSearchTreeAsBinaryTree(int size)
 
 int main()
 {
-	return testSearchTreeAsBinaryTree(15);
+	return testSearchTree(15);
 	int* a = new int[10];
 	for (int i = 0; i < 10; i++) {
 		a[i] = rand()%10;
