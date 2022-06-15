@@ -4,6 +4,35 @@
 #include <vector>
 #include <cstdlib>
 
+bool check(std::vector<int> a, int b)
+{
+	for (int i = 0; i < a.size(); i++) {
+		if (a.at(i) == b) return true;
+	}
+	return false;
+}
+
+std::vector<int> OptimalKeys(int** R, std::vector<int> d) {
+
+	int n = d.size() + 1;
+
+	std::vector<int> a;
+	int i = 0, j = n - 1;
+	a.push_back(d[R[i][j] - 1]);
+
+	for (j = n - 1; j > 0; j--) {
+		for (i = 0; i < j; i++) {
+			if (!check(a, d[R[i][j] - 1])) a.push_back(d[R[i][j] - 1]);
+		}
+	}
+
+	/*for (int t = 0; t < a.size(); t++) {
+		cout << a.at(t) << " ";
+	}*/
+
+	return a;
+}
+
 class Node
 {
 private:
@@ -327,10 +356,10 @@ void BinaryTree :: printLevel(Node* subTreeRoot, const int level, const int curr
 
 	if (currentLevel == level) {
 		if (subTreeRoot == nullptr) {
-			cout << "Null" << "  ";
+			cout << "N" << " ";
 		}
 		else {
-			cout << subTreeRoot->key << "   ";
+			cout << subTreeRoot->key << " ";
 		}
 	}
 	else if (currentLevel < level) {
@@ -788,6 +817,7 @@ public:
 	bool deleteNode(const int key, Node& subTreeRoot) override;
 	int GetMinKey(Node& subTreeRoot) override;
 	int GetMaxKey(Node& subTreeRoot) override;
+	SearchBTree OptimalSearchTree(std::vector <int> const& d, std::vector <int> const& p, std::vector <int > const& q);
 	
 	SearchBTree& operator= (SearchBTree& CopyTree);
 protected:
@@ -1132,6 +1162,106 @@ SearchBTree& SearchBTree:: operator= (SearchBTree& outTree)
 	}
 }
 
+SearchBTree SearchBTree::OptimalSearchTree(std::vector <int> const& d, std::vector <int> const& p, std::vector <int > const& q) {
+	const int n = d.size() + 1;
+
+	if (not ((d.size() == p.size()) and (n == q.size())) or n == 1)
+		std::cerr << "incorrect data" << std::endl;
+	
+	int** W = new int* [n];
+	for (int i = 0; i < n; i++) {
+		W[i] = new int[n];
+		for (int j = 0; j < n; j++) {
+			W[i][j] = 0;
+		}
+	}
+
+	int** C = new int* [n];
+	for (int i = 0; i < n; i++) {
+		C[i] = new int[n];
+		for (int j = 0; j < n; j++) {
+			C[i][j] = 0;
+		}
+	}
+
+	int** R = new int* [n];
+	for (int i = 0; i < n; i++) {
+		R[i] = new int[n];
+		for (int j = 0; j < n; j++) {
+			R[i][j] = 0;
+		}
+	}
+
+	// заполнение таблицы W ловушками
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i == j)
+				W[i][j] = q[j];
+			if (i + 1 <= j)
+				W[i][j] = W[i][j - 1] + p[j - 1] + q[j];
+		}
+	}
+
+	// заполнение таблицы C 
+	for (int i = 0; i < n; i++) {
+		C[i][i] = q[i];
+	}
+	for (int i = 0; i < n - 1; i++) {
+		C[i][i + 1] = W[i][i + 1] + C[i][i] + C[i + 1][i + 1];
+		R[i][i + 1] = i + 1;
+	}
+
+	for (int x = 2; x < n; x++) {
+		for (int i = 0; i < n - x; i++) {
+			int m = 0, k = m + i + 1;
+			int _min = C[i][m + i] + C[m + i + 1][x + i];
+			for (m = 1; m < x; m++) {
+				if (C[i][m + i] + C[m + i + 1][x + i] < _min) {
+					_min = C[i][m + i] + C[m + i + 1][x + i];
+					k = m + i + 1;
+				}
+			}
+			C[i][x + i] = W[i][x + i] + _min;
+			R[i][x + i] = k;
+		}
+	}
+
+	/*for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::cout.width(3);
+			std::cout << W[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "\n";
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::cout.width(3);
+			std::cout << C[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "\n";
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::cout.width(3);
+			std::cout << R[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "\n";*/
+
+	SearchBTree tree;
+	std::vector <int> keys = OptimalKeys(R, d);
+	for (int i = 0; i < keys.size(); i++)
+		tree.addNode(keys[i]);
+
+	tree.printLevel();
+	return tree;
+}
+
 
 bool testSearchTree(int size)
 {
@@ -1191,47 +1321,7 @@ bool testSearchTree(int size)
 	return (failedCase == 0);
 }
 
-//
-//int testSearchTreeAsBinaryTree(BinaryTree &tree, const int size)
-//{
-// if (tree.getNumber(tree.getRoot()) != size) {
-// return -1;
-// }
-//
-//
-// std::vector<int> nodesKeys = tree.getVectorKeys(tree.getRoot());
-//
-//
-// for (int i = size - 1; i >= 0; —i) {
-// BinaryTree subTree = tree.copySubTree(i);
-// int subTreeSize = subTree.numberOfNodes();
-// if (subTreeSize > 1) {
-// int rootKey = subTree.getKeyByIndex(0);
-// int rootLevel = subTree.getLevelByKey(rootKey);
-//
-//
-// int firstChildKey = subTree.getKeyByIndex(1);
-// int childsLevel = subTree.getLevelByKey(firstChildKey);
-//
-//
-// int secondChildKey = -1;
-// if (subTreeSize > 2) {
-// secondChildKey = subTree.getKeyByIndex(2);
-// if (subTree.getLevelByKey(secondChildKey) != childsLevel) {
-// secondChildKey = -1;
-// }
-// }
-//
-//
-// if (secondChildKey >= 0 && !(firstChildKey < rootKey && rootKey <= secondChildKey)) {
-// return -2;
-// }
-// }
-// }
-//
-//
-// return 0;
-//}
+
 
 bool testSearchTreeAsBinaryTree(int size)
 {
@@ -1297,14 +1387,20 @@ bool testSearchTreeAsBinaryTree(int size)
 
 int main()
 {
-	return testSearchTree(15);
+	//return testSearchTreeAsBinaryTree(15);
 	int* a = new int[10];
 	for (int i = 0; i < 10; i++) {
-		a[i] = rand()%10;
-		std::cout << a[i];
+		a[i] = i;	
 	}
-	std::cout << std::endl;
 
-	SearchBTree t1(a, 10);
+	SearchBTree opTree;
+	
+	std::vector<int> d{10, 20, 30, 40};
+	std::vector<int> p{2, 1, 1, 5};
+	std::vector<int> q{1, 10, 1, 1, 10};
+	
+	opTree.OptimalSearchTree(d, p, q).printLevel();
+	//std::cout << opTree.getRoot()->KeyOfNode();
+	
 	return 0;
 }
